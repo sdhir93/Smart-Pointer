@@ -21,6 +21,7 @@ class Pointer
 {
 private:
     // RefContainer maintains the garbage collection list
+    // It is a doubled linked list of PtrDetails
     static std::list<PtrDetails<T> > refContainer;
 
     // Address points to the allocated memory to which
@@ -38,8 +39,9 @@ private:
     typename std::list<PtrDetails<T> >::iterator findPtrInfo(T* ptr);
 
 public:
-    // Define an iterator type for Pointer<T>.
+    // Define an iterator type for Pointer<T>
     typedef Iter<T> GCiterator;
+
     // Empty constructor
     // NOTE: templates aren't able to have prototypes with default arguments
     // this is why constructor is designed like this:
@@ -50,38 +52,41 @@ public:
 
     Pointer(T*);
 
-    // Copy constructor.
+    // Copy constructor
     Pointer(const Pointer &);
 
-    // Destructor for Pointer.
+    // Destructor for Pointer
     ~Pointer();
 
     // Collect garbage. Returns true if at least
-    // one object was freed.
+    // one object was freed
     static bool collect();
 
-    // Overload assignment of pointer to Pointer.
+    // Overload assignment of pointer to Pointer
     T* operator=(T* t);
 
-    // Overload assignment of Pointer to Pointer.
+    // Overload assignment of Pointer to Pointer
     Pointer &operator=(Pointer &rv);
 
     // Return a reference to the object pointed
-    // to by this Pointer.
+    // to by this Pointer
     T& operator*()
     {
         return *addr;
     }
 
-    // Return the address being pointed to.
+    // Return the address being pointed to
     T* operator->()
     {
         return addr;
     }
 
     // Return a reference to the object at the
-    // index specified by i.
-    T& operator[](int i){ return addr[i];}
+    // index specified by i
+    T& operator[](int i)
+    {
+        return addr[i];
+    }
 
     // Conversion function to T*
     operator T* ()
@@ -89,7 +94,7 @@ public:
         return addr;
     }
 
-    // Return an Iter to the start of the allocated memory.
+    // Return an Iter to the start of the allocated memory
     Iter<T> begin()
     {
         int _size = 0;
@@ -98,7 +103,7 @@ public:
         return Iter<T>(addr, addr, addr + _size);
     }
 
-    // Return an Iter to one past the end of an allocated array.
+    // Return an Iter to one past the end of an allocated array
     Iter<T> end()
     {
         int _size = 0;
@@ -107,16 +112,16 @@ public:
         return Iter<T>(addr + _size, addr, addr + _size);
     }
 
-    // Return the size of refContainer for this type of Pointer.
+    // Return the size of refContainer for this type of Pointer
     static int refContainerSize()
     {
         return refContainer.size();
     }
 
-    // A utility function that displays refContainer.
+    // A utility function that displays refContainer
     static void showlist();
 
-    // Clear refContainer when program exits.
+    // Clear refContainer when program exits
     static void shutdown();
 };
 
@@ -221,7 +226,7 @@ T* Pointer<T, size>::operator=(T* t)
     return t;
 }
 
-// Overload assignment of Pointer to Pointer.
+// Overload assignment of Pointer to Pointer
 template <class T, int size>
 Pointer<T, size> &Pointer<T, size>::operator=(Pointer &rv)
 {
@@ -235,7 +240,7 @@ Pointer<T, size> &Pointer<T, size>::operator=(Pointer &rv)
     return rv;
 }
 
-// A utility function that displays refContainer.
+// A utility function that displays refContainer
 template <class T, int size>
 void Pointer<T, size>::showlist()
 {
@@ -259,12 +264,13 @@ void Pointer<T, size>::showlist()
     std::cout << std::endl;
 }
 
-// Find a pointer in refContainer.
+// Find a pointer in refContainer
 template <class T, int size>
 typename std::list<PtrDetails<T> >::iterator
 Pointer<T, size>::findPtrInfo(T* ptr)
 {
     typename std::list<PtrDetails<T> >::iterator p;
+
     // Find ptr in refContainer.
     for (p = refContainer.begin(); p != refContainer.end(); p++)
     {
@@ -274,7 +280,7 @@ Pointer<T, size>::findPtrInfo(T* ptr)
     return p;
 }
 
-// Clear refContainer when program exits.
+// Clear refContainer when program exits
 template <class T, int size>
 void Pointer<T, size>::shutdown()
 {
